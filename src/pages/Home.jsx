@@ -5,28 +5,35 @@ import PizzaBlock from "../components/PizzaBlock";
 import Sceleton from "../components/PizzaBlock/Sceleton";
 import Pagination from "../components/Pagination";
 import { AppContext } from "../App";
+import { useSelector, useDispatch } from "react-redux";
+import { setCategoryId } from "../redux/slices/filterSlice";
 
 const Home = () => {
+  const dispatch = useDispatch();
+  const { categoryId, sort } = useSelector((state) => state.filter);
+  const sortType = sort.sortProperty;
+
   const { searchValue } = React.useContext(AppContext);
   const [items, setItems] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(true);
-  const [categoryId, setCategoryId] = React.useState(0);
   const [currentPage, setCurrentPage] = React.useState(1);
-  const [sortType, setSortType] = React.useState({
-    name: "Популярности",
-    sortProperty: "rating",
-  });
+
+  const onChangingCategory = (id) => {
+    dispatch(setCategoryId(id));
+  };
 
   useEffect(() => {
     setIsLoading(true);
 
-    const sortBy = sortType.sortProperty.replace("-", "");
-    const order = sortType.sortProperty.includes("-") ? "asc" : " desc";
+    const sortBy = sortType.replace("-", "");
+    const order = sortType.includes("-") ? "asc" : " desc";
     const category = categoryId > 0 ? `category = ${categoryId}` : "";
     const search = searchValue ? `search = ${searchValue}` : "";
-    fetch(
+    const url = new URL(
       `https://6460b48efe8d6fb29e35726a.mockapi.io/objects?page=${currentPage}&limit=4&${category}&sortBy=${sortBy}&order=${order}${search}`
-    )
+    );
+
+    fetch(url)
       .then((res) => res.json())
       .then((arr) => {
         setItems(arr);
@@ -41,11 +48,8 @@ const Home = () => {
   return (
     <div className="container">
       <div className="content__top">
-        <Categories
-          value={categoryId}
-          onChangeCategory={(i) => setCategoryId(i)}
-        />
-        <Sort value={sortType} onChangeSort={(i) => setSortType(i)} />
+        <Categories value={categoryId} onChangeCategory={onChangingCategory} />
+        <Sort />
       </div>
       <h2 className="content__title">Все пиццы</h2>
 
