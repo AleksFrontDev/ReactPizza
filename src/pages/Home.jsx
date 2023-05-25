@@ -1,10 +1,10 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import qs from "qs";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import { list } from "../components/Sort";
+import { sortList } from "../components/Sort";
 import Sort from "../components/Sort";
 import Categories from "../components/Categories";
 import PizzaBlock from "../components/PizzaBlock";
@@ -20,6 +20,8 @@ import {
 const Home = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const isSearch = useRef(false);
+  const isMounted = useRef(false);
   const { categoryId, sort, currentPage } = useSelector(
     (state) => state.filter
   );
@@ -57,31 +59,44 @@ const Home = () => {
     window.scrollTo(0, 0);
   };
 
+  // Если изменили параметры и был первый рендер
+  useEffect(() => {
+    if (isMounted.current) {
+      const queryString = qs.stringify({
+        sortProperty: sort.sortProperty,
+        categoryId,
+        currentPage,
+      });
+      navigate(`?${queryString}`);
+    }
+    isMounted.current = true;
+  }, [categoryId, sortType, currentPage]);
+
+  // Если был первый рендер, то проверяем URl-параметры и сохраняем в редуксе
   useEffect(() => {
     if (window.location.search) {
       const params = qs.parse(window.location.search.substring(1));
-      const sort = list.find((obj) => obj.sortProperty === params.sortProperty);
+      const sort = sortList.find(
+        (obj) => obj.sortProperty === params.sortProperty
+      );
       dispatch(
         setFilters({
           ...params,
           sort,
         })
       );
+      isSearch.current = true;
     }
   }, []);
 
+  // Если был первый рендер, то запрашиваем пиццы
   useEffect(() => {
     window.scroll(0, 0);
+    if (!isSearch.current) {
+      fetchPizzas();
+    }
+    isSearch.current = false;
   }, [categoryId, sortType, searchValue, currentPage]);
-
-  useEffect(() => {
-    const queryString = qs.stringify({
-      sortProperty: sort.sortProperty,
-      categoryId,
-      currentPage,
-    });
-    navigate(`?${queryString}`);
-  }, [categoryId, sortType, currentPage]);
 
   const sceletons = [...new Array(10)].map((_, indexLoading) => (
     <Sceleton key={indexLoading} />

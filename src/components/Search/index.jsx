@@ -16,7 +16,9 @@ const Search = () => {
   };
 
   const updateSearchValue = React.useCallback(
+    //Использовали debounce и CallBack для того,чтобы при вводе данных в input ререндер происходил только через cекунду
     debounce((str) => {
+      //одну секунду после ввода последнего символа
       setSearchValue(str);
     }, 1000),
     []
