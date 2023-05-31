@@ -31,19 +31,18 @@ const Home = () => {
   const [items, setItems] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(true);
 
-  const onChangingCategory = (id) => {
-    dispatch(setCategoryId(id));
-  };
+  const onChangingCategory = React.useCallback((idx) => {
+    dispatch(setCategoryId(idx));
+  }, []);
 
-  const onChangePage = (number) => {
-    dispatch(setCurrentPage(number));
+  const onChangePage = (page) => {
+    dispatch(setCurrentPage(page));
   };
-
   const fetchPizzas = () => {
     setIsLoading(true);
 
-    const sortBy = sortType.replace("-", "");
-    const order = sortType.includes("-") ? "asc" : " desc";
+    const sortBy = sort.sortProperty.replace("-", "");
+    const order = sort.sortProperty.includes("-") ? "asc" : "desc";
     const category = categoryId > 0 ? `category=${categoryId}` : "";
     const search = searchValue ? `search=${searchValue}` : "";
 
@@ -53,10 +52,8 @@ const Home = () => {
       )
       .then((res) => {
         setItems(res.data);
-
         setIsLoading(false);
       });
-    window.scrollTo(0, 0);
   };
 
   // Если изменили параметры и был первый рендер
@@ -70,7 +67,7 @@ const Home = () => {
       navigate(`?${queryString}`);
     }
     isMounted.current = true;
-  }, [categoryId, sortType, currentPage]);
+  }, [categoryId, sortType, currentPage, sort.sortProperty, navigate]);
 
   // Если был первый рендер, то проверяем URl-параметры и сохраняем в редуксе
   useEffect(() => {
@@ -87,26 +84,28 @@ const Home = () => {
       );
       isSearch.current = true;
     }
-  }, []);
+  }, [dispatch]);
 
   // Если был первый рендер, то запрашиваем пиццы
-  useEffect(() => {
-    window.scroll(0, 0);
+  React.useEffect(() => {
+    window.scrollTo(0, 0);
+
     if (!isSearch.current) {
       fetchPizzas();
     }
+
     isSearch.current = false;
-  }, [categoryId, sortType, searchValue, currentPage]);
+  }, [categoryId, sort.sortProperty, searchValue, currentPage]);
 
   const sceletons = [...new Array(10)].map((_, indexLoading) => (
     <Sceleton key={indexLoading} />
   ));
-  const pizzas = items.map((obj) => <PizzaBlock {...obj} />);
+  const pizzas = items.map((obj) => <PizzaBlock key={obj.id} {...obj} />);
   return (
     <div className="container">
       <div className="content__top">
         <Categories value={categoryId} onChangeCategory={onChangingCategory} />
-        <Sort />
+        <Sort value={sort} />
       </div>
       <h2 className="content__title">Все пиццы</h2>
 
