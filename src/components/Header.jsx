@@ -5,9 +5,7 @@ import { Link } from "react-router-dom";
 import Search from "./Search";
 
 const Header = () => {
-  const { objects, totalPrice } = useSelector((state) => state.cart);
-
-  const totalCount = objects.reduce((sum, obj) => sum + obj.count, 0);
+  const { totalCount, totalPrice } = useSelector((state) => state.cart);
 
   return (
     <div className="header">

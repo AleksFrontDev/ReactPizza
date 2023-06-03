@@ -1,6 +1,5 @@
 import React, { useEffect, useRef } from "react";
 import qs from "qs";
-import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
@@ -16,6 +15,7 @@ import {
   setCurrentPage,
   setFilters,
 } from "../redux/slices/filterSlice";
+import { fetchPizzas } from "../redux/slices/pizzaSlice";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -25,10 +25,11 @@ const Home = () => {
   const { categoryId, sort, currentPage } = useSelector(
     (state) => state.filter
   );
+  const items = useSelector((state) => state.pizza.items);
   const sortType = sort.sortProperty;
 
   const { searchValue } = React.useContext(AppContext);
-  const [items, setItems] = React.useState([]);
+
   const [isLoading, setIsLoading] = React.useState(true);
 
   const onChangingCategory = React.useCallback((idx) => {
@@ -38,7 +39,7 @@ const Home = () => {
   const onChangePage = (page) => {
     dispatch(setCurrentPage(page));
   };
-  const fetchPizzas = () => {
+  const getPizzas = async () => {
     setIsLoading(true);
 
     const sortBy = sort.sortProperty.replace("-", "");
@@ -46,14 +47,22 @@ const Home = () => {
     const category = categoryId > 0 ? `category=${categoryId}` : "";
     const search = searchValue ? `search=${searchValue}` : "";
 
-    axios
-      .get(
-        `https://6460b48efe8d6fb29e35726a.mockapi.io/objects?page=${currentPage}&limit=4&${category}&sortBy=${sortBy}&order=${order}&${search}`
-      )
-      .then((res) => {
-        setItems(res.data);
-        setIsLoading(false);
-      });
+    try {
+      dispatch(
+        fetchPizzas({
+          sortBy,
+          order,
+          category,
+          search,
+        })
+      );
+    } catch (error) {
+      alert("Ошибка при получении пицц");
+      console.log("ERROR", error);
+    } finally {
+      setIsLoading(false);
+    }
+    window.scrollTo(0, 0);
   };
 
   // Если изменили параметры и был первый рендер
@@ -91,7 +100,7 @@ const Home = () => {
     window.scrollTo(0, 0);
 
     if (!isSearch.current) {
-      fetchPizzas();
+      getPizzas();
     }
 
     isSearch.current = false;

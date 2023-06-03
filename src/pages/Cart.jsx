@@ -3,6 +3,9 @@ import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 
 import { CartItem } from "../components/CartItem";
+import { clearItems } from "../redux/slices/cartSlice";
+
+import CartEmpty from "../components/CartEmpty";
 
 function Cart() {
   const dispatch = useDispatch();
@@ -10,6 +13,15 @@ function Cart() {
   const addedPizzas = Object.keys(objects).map((key) => {
     return objects[key];
   });
+
+  const onClicClear = () => {
+    if (window.confirm("Вы действительно хотите очистить корзину?"))
+      dispatch(clearItems());
+  };
+
+  if (!totalPrice) {
+    return <CartEmpty />;
+  }
 
   return (
     <div className="container container--cart">
@@ -47,7 +59,7 @@ function Cart() {
             </svg>
             Корзина
           </h2>
-          <div className="cart__clear">
+          <div onClick={onClicClear} className="cart__clear">
             <svg
               width="20"
               height="20"
@@ -132,21 +144,6 @@ function Cart() {
             </button>
           </div>
         </div>
-      </div>
-
-      <div className="cart cart--empty">
-        <h2>
-          Корзина пустая <i>😕</i>
-        </h2>
-        <p>
-          Вероятней всего, вы не заказывали ещё пиццу.
-          <br />
-          Для того, чтобы заказать пиццу, перейди на главную страницу.
-        </p>
-        <img img="Здесь будет картинка" alt="Empty cart" />
-        <Link to="/" className="button button--black">
-          <span>Вернуться назад</span>
-        </Link>
       </div>
     </div>
   );
