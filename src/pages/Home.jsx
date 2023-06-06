@@ -25,43 +25,37 @@ const Home = () => {
   const { categoryId, sort, currentPage } = useSelector(
     (state) => state.filter
   );
-  const items = useSelector((state) => state.pizza.items);
+
+  const { items, status } = useSelector((state) => state.pizza);
   const sortType = sort.sortProperty;
 
   const { searchValue } = React.useContext(AppContext);
 
-  const [isLoading, setIsLoading] = React.useState(true);
-
-  const onChangingCategory = React.useCallback((idx) => {
-    dispatch(setCategoryId(idx));
-  }, []);
+  const onChangingCategory = React.useCallback(
+    (idx) => {
+      dispatch(setCategoryId(idx));
+    },
+    [dispatch]
+  );
 
   const onChangePage = (page) => {
     dispatch(setCurrentPage(page));
   };
   const getPizzas = async () => {
-    setIsLoading(true);
-
     const sortBy = sort.sortProperty.replace("-", "");
     const order = sort.sortProperty.includes("-") ? "asc" : "desc";
     const category = categoryId > 0 ? `category=${categoryId}` : "";
     const search = searchValue ? `search=${searchValue}` : "";
 
-    try {
-      dispatch(
-        fetchPizzas({
-          sortBy,
-          order,
-          category,
-          search,
-        })
-      );
-    } catch (error) {
-      alert("Ошибка при получении пицц");
-      console.log("ERROR", error);
-    } finally {
-      setIsLoading(false);
-    }
+    dispatch(
+      fetchPizzas({
+        sortBy,
+        order,
+        category,
+        search,
+        currentPage,
+      })
+    );
     window.scrollTo(0, 0);
   };
 
@@ -76,7 +70,11 @@ const Home = () => {
       navigate(`?${queryString}`);
     }
     isMounted.current = true;
-  }, [categoryId, sortType, currentPage, sort.sortProperty, navigate]);
+  }, [categoryId, sortType, currentPage, sort.sortProperty]);
+
+  useEffect(() => {
+    getPizzas();
+  }, [categoryId, sort.sortProperty, searchValue, currentPage]);
 
   // Если был первый рендер, то проверяем URl-параметры и сохраняем в редуксе
   useEffect(() => {
@@ -93,7 +91,7 @@ const Home = () => {
       );
       isSearch.current = true;
     }
-  }, [dispatch]);
+  }, []);
 
   // Если был первый рендер, то запрашиваем пиццы
   React.useEffect(() => {
@@ -118,7 +116,9 @@ const Home = () => {
       </div>
       <h2 className="content__title">Все пиццы</h2>
 
-      <div className="content__items">{isLoading ? sceletons : pizzas}</div>
+      <div className="content__items">
+        {status === "loading" ? sceletons : pizzas}
+      </div>
       <Pagination value={currentPage} onChangePage={onChangePage} />
     </div>
   );
