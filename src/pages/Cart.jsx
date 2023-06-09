@@ -3,13 +3,13 @@ import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 
 import { CartItem } from "../components/CartItem";
-import { clearItems } from "../redux/slices/cartSlice";
+import { clearItems, selectCart } from "../redux/slices/cartSlice";
 
 import CartEmpty from "../components/CartEmpty";
 
 function Cart() {
   const dispatch = useDispatch();
-  const { totalPrice, totalCount, objects } = useSelector(({ cart }) => cart);
+  const { totalPrice, totalCount, objects } = useSelector(selectCart);
   const addedPizzas = Object.keys(objects).map((key) => {
     return objects[key];
   });

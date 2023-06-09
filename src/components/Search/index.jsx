@@ -1,16 +1,18 @@
 import React from "react";
 
 import styles from "./Search.module.scss";
-import { AppContext } from "../../App";
 import { debounce } from "lodash";
+import { useDispatch } from "react-redux";
+import { setSearchValue } from "../../redux/slices/filterSlice";
 
 const Search = () => {
+  const dispatch = useDispatch();
+
   const [value, setValue] = React.useState("");
-  const { setSearchValue } = React.useContext(AppContext);
   const inputRef = React.useRef();
 
   const onClickClear = () => {
-    setSearchValue("");
+    dispatch(setSearchValue(""));
     setValue("");
     inputRef.current.focus();
   };
@@ -18,8 +20,8 @@ const Search = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const updateSearchValue = React.useCallback(
     debounce((str) => {
-      setSearchValue(str);
-    }, 1000),
+      dispatch(setSearchValue(str));
+    }, 150),
     []
   );
   //Использовали debounce и CallBack для того,чтобы при вводе данных в input ререндер происходил только через cекунду

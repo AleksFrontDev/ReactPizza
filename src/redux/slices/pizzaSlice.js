@@ -3,7 +3,7 @@ import axios from "axios";
 
 export const fetchPizzas = createAsyncThunk(
   "pizza/fetchPizzasStatus",
-  async (params) => {
+  async (params, thunkApi) => {
     const { sortBy, order, category, search, currentPage } = params;
     const { data } = await axios.get(
       `https://6460b48efe8d6fb29e35726a.mockapi.io/objects?page=${currentPage}&limit=4&${category}&sortBy=${sortBy}&order=${order}&${search}`
@@ -40,21 +40,38 @@ const pizzaSlice = createSlice({
     },
   },
 });
+
+// ////////
 //   extraReducers: (builder) => {
 //     builder.addCase(fetchPizzas.pending, (state, action) => {
+// state.status = "loading";
 //       state.items.push(action.payload);
-//       console.log("Идет отправка");
+//
 //     });
 //     builder.addCase(fetchPizzas.fulfilled, (state, action) => {
+// state.items = action.payload;
+// state.status = "success";
 //       state.items.push(action.payload);
-//       console.log("Все ок");
+//
 //     });
 //     builder.addCase(fetchPizzas.rejected, (state, action) => {
+// state.status = "error";
+// state.items = [];
 //       state.items.push(action.payload);
-//       console.log("была ошибка");
+//
 //     });
 //   },
 // });
+////////////////////////////
+// extraReducers: (builder) => {
+//   // Add reducers for additional action types here, and handle loading state as needed
+//   builder.addCase(fetchUserById.fulfilled, (state, action) => {
+//     // Add user to the state array
+//     state.entities.push(action.payload)
+//   })
+// },
+// })
+export const selectPizzaData = (state) => state.pizza;
 
 export const { setItems, sortBy, order, category, search, currentPage } =
   pizzaSlice.actions;

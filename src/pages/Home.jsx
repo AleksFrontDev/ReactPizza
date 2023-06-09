@@ -11,25 +11,23 @@ import Sceleton from "../components/PizzaBlock/Sceleton";
 import Pagination from "../components/Pagination";
 import { AppContext } from "../App";
 import {
+  selectFilter,
   setCategoryId,
   setCurrentPage,
   setFilters,
 } from "../redux/slices/filterSlice";
-import { fetchPizzas } from "../redux/slices/pizzaSlice";
+import { fetchPizzas, selectPizzaData } from "../redux/slices/pizzaSlice";
 
 const Home = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const isSearch = useRef(false);
   const isMounted = useRef(false);
-  const { categoryId, sort, currentPage } = useSelector(
-    (state) => state.filter
-  );
+  const { categoryId, sort, currentPage, searchValue } =
+    useSelector(selectFilter);
 
-  const { items, status } = useSelector((state) => state.pizza);
+  const { items, status } = useSelector(selectPizzaData);
   const sortType = sort.sortProperty;
-
-  const { searchValue } = React.useContext(AppContext);
 
   const onChangingCategory = React.useCallback(
     (idx) => {
@@ -74,7 +72,7 @@ const Home = () => {
 
   useEffect(() => {
     getPizzas();
-  }, [categoryId, sort.sortProperty, searchValue, currentPage]);
+  }, []);
 
   // Если был первый рендер, то проверяем URl-параметры и сохраняем в редуксе
   useEffect(() => {
@@ -115,10 +113,20 @@ const Home = () => {
         <Sort value={sort} />
       </div>
       <h2 className="content__title">Все пиццы</h2>
+      {status === "error" ? (
+        <div className="content_error-info">
+          <h2>Произошла ошибка 🧐</h2>
+          <p>
+            К сожалению,не удалось получить пиццы. Попробуйте повторить попытку
+            позже
+          </p>
+        </div>
+      ) : (
+        <div className="content__items">
+          {status === "loading" ? sceletons : pizzas}
+        </div>
+      )}
 
-      <div className="content__items">
-        {status === "loading" ? sceletons : pizzas}
-      </div>
       <Pagination value={currentPage} onChangePage={onChangePage} />
     </div>
   );
