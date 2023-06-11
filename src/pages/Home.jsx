@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import qs from "qs";
 import { useSelector, useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { sortList } from "../components/Sort";
 import Sort from "../components/Sort";
@@ -9,7 +9,7 @@ import Categories from "../components/Categories";
 import PizzaBlock from "../components/PizzaBlock";
 import Sceleton from "../components/PizzaBlock/Sceleton";
 import Pagination from "../components/Pagination";
-import { AppContext } from "../App";
+
 import {
   selectFilter,
   setCategoryId,
