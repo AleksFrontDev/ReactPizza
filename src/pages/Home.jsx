@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import qs from "qs";
 import { useSelector, useDispatch } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { sortList } from "../components/Sort";
 import Sort from "../components/Sort";
