@@ -1,4 +1,3 @@
-import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 
@@ -7,7 +6,7 @@ import { clearItems, selectCart } from "../redux/slices/cartSlice";
 
 import CartEmpty from "../components/CartEmpty";
 
-function Cart() {
+const Cart:React.FC = () => {
   const dispatch = useDispatch();
   const { totalPrice, totalCount, objects } = useSelector(selectCart);
   const addedPizzas = Object.keys(objects).map((key) => {
@@ -102,7 +101,7 @@ function Cart() {
         </div>
         <div className="content__items">
           {addedPizzas.map((obj) => (
-            <CartItem {...obj} />
+            <CartItem key={obj.id} {...obj} />
           ))}
         </div>
 

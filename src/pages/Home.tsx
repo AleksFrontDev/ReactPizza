@@ -18,7 +18,9 @@ import {
 } from "../redux/slices/filterSlice";
 import { fetchPizzas, selectPizzaData } from "../redux/slices/pizzaSlice";
 
-const Home = () => {
+
+
+const Home:React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const isSearch = useRef(false);
@@ -30,13 +32,13 @@ const Home = () => {
   const sortType = sort.sortProperty;
 
   const onChangingCategory = React.useCallback(
-    (idx) => {
+    (idx: number) => {
       dispatch(setCategoryId(idx));
     },
     [dispatch]
   );
 
-  const onChangePage = (page) => {
+  const onChangePage = (page:number) => {
     dispatch(setCurrentPage(page));
   };
   const getPizzas = async () => {
@@ -46,6 +48,7 @@ const Home = () => {
     const search = searchValue ? `search=${searchValue}` : "";
 
     dispatch(
+      // @ts-ignore
       fetchPizzas({
         sortBy,
         order,
@@ -105,12 +108,13 @@ const Home = () => {
   const sceletons = [...new Array(10)].map((_, indexLoading) => (
     <Sceleton key={indexLoading} />
   ));
-  const pizzas = items.map((obj) => <PizzaBlock key={obj.id} {...obj} />);
+  const pizzas = items.map((obj:any) => <PizzaBlock key={obj.id} {...obj} />);
   return (
     <div className="container">
       <div className="content__top">
         <Categories value={categoryId} onChangeCategory={onChangingCategory} />
-        <Sort value={sort} />
+        {// @ts-ignore
+        <Sort value={sort} /> }
       </div>
       <h2 className="content__title">Все пиццы</h2>
       {status === "error" ? (
@@ -127,7 +131,7 @@ const Home = () => {
         </div>
       )}
 
-      <Pagination value={currentPage} onChangePage={onChangePage} />
+      <Pagination currentPage={currentPage} onChangePage={onChangePage} />
     </div>
   );
 };

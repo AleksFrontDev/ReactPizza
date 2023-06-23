@@ -2,7 +2,14 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { selectSort, setSort } from "../redux/slices/filterSlice";
 
-export const sortList = [
+type SortItem = {
+  name:string,
+  sortProperty:string
+}
+
+type PopupClick = MouseEvent & {  composedPath: (tar?: HTMLElement) => EventTarget[]}
+
+export const sortList:  SortItem[] = [
   { name: "Популярности (DESC)", sortProperty: "rating" },
   { name: "Популярности (ASC)", sortProperty: "-rating" },
   { name: "Цене (DESC)", sortProperty: "price" },
@@ -11,21 +18,24 @@ export const sortList = [
   { name: "Алфавиту (ASC)", sortProperty: "-title" },
 ];
 
-const Sort = () => {
+
+
+const Sort:React.FC = () => {
   const dispatch = useDispatch();
   const sort = useSelector(selectSort);
-  const sortRef = React.useRef();
+  const sortRef = React.useRef<HTMLDivElement>(null);
 
   const [open, setOpen] = React.useState(false);
 
-  const onClickListItem = (obj) => {
+  const onClickListItem = (obj: SortItem) => {
     dispatch(setSort(obj));
     setOpen(false);
   };
 
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (!event.composedPath().includes(sortRef.current)) {
+    const handleClickOutside = (event:MouseEvent) => {
+      const _event = event as PopupClick;
+      if (sortRef.current && !_event.composedPath().includes(sortRef.current)) {
         setOpen(false);
       }
     };
@@ -37,7 +47,7 @@ const Sort = () => {
   }, []);
 
   return (
-    <div ref={sortRef} className="sort">
+    <div   ref={sortRef} className="sort">
       <div className="sort__label">
         <svg
           width="10"
