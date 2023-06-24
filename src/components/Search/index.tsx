@@ -1,12 +1,16 @@
 import React from "react";
 
 import styles from "./Search.module.scss";
+
 import  debounce from "lodash";
+
+
 import { useDispatch } from "react-redux";
 import { setSearchValue } from "../../redux/slices/filterSlice";
 
 const Search:React.FC = () => {
   const dispatch = useDispatch();
+
 
   const [value, setValue] = React.useState("");
   const inputRef = React.useRef<HTMLDivElement>(null);
@@ -17,7 +21,8 @@ const Search:React.FC = () => {
     inputRef.current?.focus();
   };
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+
+
   const updateSearchValue = React.useCallback(
     debounce((str: string) => {
       dispatch(setSearchValue(str));

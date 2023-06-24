@@ -13,7 +13,7 @@ declare module '*.scss' {
     export default content;
 }
 
-declare module 'lodash'  {
+declare module 'lodash'{
     const content: any;
     export default content;
 }

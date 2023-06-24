@@ -13,8 +13,9 @@ export const CartItem:React.FC<CartItemProps>= ({ id, name, type, size, price, c
     dispatch(addItem({ id }));
   };
   const onClickMinus = () => {
-    dispatch(minusItem(id));
-  };
+    if (count > 0) {
+      dispatch(minusItem(id))
+    }}
   const onClickRemove = () => {
     if (window.confirm("Вы действительно хотите удалить?"))
       dispatch(removeItem(id));
