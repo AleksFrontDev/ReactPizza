@@ -1,15 +1,16 @@
 import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 
-import { CartItem } from "../components/CartItem";
 import { clearItems, selectCart } from "../redux/slices/cartSlice";
 
 import CartEmpty from "../components/CartEmpty";
+import CartItem from "../components/CartItem";
 
 const Cart:React.FC = () => {
   const dispatch = useDispatch();
   const { totalPrice, totalCount, objects } = useSelector(selectCart);
   const addedPizzas = Object.keys(objects).map((key) => {
+   // @ts-ignore
     return objects[key];
   });
 
