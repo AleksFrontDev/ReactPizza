@@ -8,26 +8,27 @@ type PizzaBlockProps = {
 }
 
 const typeNames = ["Тонкое", "Традиционное"];
-const PizzaBlock:React.FC<PizzaBlockProps> = ({ id, imageUrl, title, price, sizes, types }) => {
-  const CartItem = useSelector(selectCartItemById(id));
+const PizzaBlock: React.FC<PizzaBlockProps> = ({ id, imageUrl, title, price, sizes, types }) => {
+  const cartItem = useSelector(selectCartItemById(id));
   const dispatch = useDispatch();
   const [activeType, setActiveType] = React.useState(0);
   const [activeSize, setActiveSize] = React.useState(0);
 
-  const addedCount = CartItem ? CartItem.count : 0;
+  const addedCount = cartItem ? cartItem.count : 0;
 
   const onClickAdd = () => {
-    const item:CartItem = {
+    const item: CartItem = {
       id,
       price,
       imageUrl,
       title,
       type: typeNames[activeType],
       size: sizes[activeSize],
-      count:0
+      count: 1, 
     };
     dispatch(addItem(item));
   };
+
   return (
     <div className="pizza-block-wrapper">
       <div className="pizza-block">

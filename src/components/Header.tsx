@@ -4,17 +4,11 @@ import { useSelector } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
 import Search from "./Search";
 import { selectCart } from "../redux/slices/cartSlice";
-import React, { useState } from "react";
 
 const Header = () => {
   const { totalCount, totalPrice} = useSelector(selectCart);
   const location = useLocation();
-// const [objects,setObjects] = useState()
 
-// React.useEffect(() => {
-//   const json = JSON.stringify(objects)
-//   localStorage.setObjects('cart',json);
-// },[objects])
 
   return (
     <div className="header">

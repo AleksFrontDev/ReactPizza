@@ -2,7 +2,7 @@ import React from "react";
 
 import styles from "./Search.module.scss";
 
-import  debounce from "lodash";
+import debounce from "lodash/debounce";
 
 
 import { useDispatch } from "react-redux";
@@ -23,6 +23,7 @@ const Search:React.FC = () => {
 
 
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const updateSearchValue = React.useCallback(
     debounce((str: string) => {
       dispatch(setSearchValue(str));
